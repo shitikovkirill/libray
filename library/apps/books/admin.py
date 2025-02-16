@@ -11,7 +11,6 @@ class BookAdmin(admin.ModelAdmin):
         "isbn",
     )
     search_fields = ("title", "author", "isbn")
-    # list_filter = ('is_available',)
 
 
 @admin.register(Loan)
@@ -21,5 +20,4 @@ class LoanAdmin(admin.ModelAdmin):
         "user",
         "borrowed_date",
     )
-    # list_filter = ('is_returned',)
     search_fields = ("book__title", "user__username")

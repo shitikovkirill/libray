@@ -28,6 +28,7 @@ EXPOSE 8000
 
 CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
 
+
 FROM dev AS prod
 
 COPY ./library .
@@ -39,4 +40,4 @@ CMD gunicorn --bind 0.0.0.0:8000 library.wsgi
 
 FROM dev AS test
 
-CMD python manage.py migrate && echo 'Run tests' && python manage.py test apps.accounts
+CMD python manage.py migrate && echo 'Run tests' && python manage.py test apps.accounts apps.books

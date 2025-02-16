@@ -61,11 +61,8 @@ class UserTestCase(APITestCase):
             url,
             data,
         )
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertEqual(
-            response.data["detail"],
-            "You do not have permission to perform this action.",
-        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data["username"], "test_user2")
 
     def test_token(self):
         url = reverse("accounts:token_create")
@@ -94,5 +91,15 @@ class UserTestCase(APITestCase):
         self.assertTrue(response.data["detail"])
         self.assertIn(
             "No active account found with the given credentials",
+            response.data["detail"],
+        )
+
+    def test_get_users_with_authenticated_user_not_admin(self):
+        url = reverse("accounts:user-list")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.test_user_token)
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIn(
+            "You do not have permission to perform this action.",
             response.data["detail"],
         )
