@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 from typing import List
 
+import environ
+
+env = environ.Env(DEBUG=(bool, False), ALLOWED_HOSTS=[])
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -24,9 +28,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = "django-insecure-o*t+-*&%m3cd0!ycn8-*)(j7@te496n0)^_&!dvq!r_d%w68ho"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env("DEBUG")
 
-ALLOWED_HOSTS: List[str] = []
+ALLOWED_HOSTS: List[str] = env.list("ALLOWED_HOSTS")
 
 
 # Application definition
@@ -80,10 +84,7 @@ WSGI_APPLICATION = "library.wsgi.application"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
-    }
+    "default": env.db(),
 }
 
 REST_FRAMEWORK = {

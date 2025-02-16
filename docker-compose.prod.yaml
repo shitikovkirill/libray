@@ -1,0 +1,8 @@
+services:
+  app:
+    build:
+      target: "prod"
+    environment:
+      DEBUG: false
+      DJANGO_SETTINGS_MODULE: "library.settings.prod"
+      DATABASE_URL: postgresql://postgres:password@db/postgres

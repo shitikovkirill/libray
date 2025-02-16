@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+      target: "dev"
+    environment:
+      DEBUG: true
+      DJANGO_SETTINGS_MODULE: "library.settings.dev"
+      DATABASE_URL: postgresql://postgres:password@db/postgres
+      ALLOWED_HOSTS: "*"
+    depends_on:
+      - "db"
+    volumes:
+      - "./library:/app"
+    ports:
+      - "8000:8000"
+
+  db:
+    image: "postgres"
+    environment:
+      POSTGRES_PASSWORD: "password"
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+
+volumes:
+  pgdata:
