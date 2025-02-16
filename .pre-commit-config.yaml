@@ -1,0 +1,44 @@
+exclude: .*migrations\/.*
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    -   id: check-yaml
+    -   id: check-toml
+    -   id: check-merge-conflict
+    -   id: check-docstring-first
+    -   id: detect-private-key
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+    -   id: no-commit-to-branch
+        args: [--branch, staging, --branch, master]
+-   repo: https://github.com/psf/black
+    rev: 23.11.0
+    hooks:
+    -   id: black
+-   repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+    -   id: isort
+        args: ["--profile", "black"]
+-   repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+    -   id: flake8
+-   repo: https://github.com/Riverside-Healthcare/djLint
+    rev: v1.32.0
+    hooks:
+      - id: djlint-reformat-django
+      - id: djlint-django
+        args: ["--ignore", "H006,H013"]
+-   repo: https://github.com/PyCQA/doc8
+    rev: v1.1.1
+    hooks:
+    -   id: doc8
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: 'v1.7.0'
+  hooks:
+      - id: mypy
+        exclude: (^docs/.*|^tests/.*|^blog/app/settings.*)
+        additional_dependencies: [types-Markdown, types-requests]
+        verbose: true
