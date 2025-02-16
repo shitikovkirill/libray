@@ -6,3 +6,5 @@ services:
       DEBUG: false
       DJANGO_SETTINGS_MODULE: "library.settings.prod"
       DATABASE_URL: postgresql://postgres:password@db/postgres
+    depends_on:
+      - "db"

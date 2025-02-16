@@ -35,3 +35,8 @@ COPY ./library .
 RUN python -m pip install gunicorn
 
 CMD gunicorn --bind 0.0.0.0:8000 library.wsgi
+
+
+FROM dev AS test
+
+CMD python manage.py migrate && echo 'Run tests' && python manage.py test apps.accounts
