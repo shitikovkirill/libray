@@ -48,6 +48,7 @@ class Loan(models.Model):
             models.UniqueConstraint(
                 fields=["book", "return_date"],
                 name="prohibition of creation of double loan",
+                nulls_distinct=False,
             )
         ]
 
