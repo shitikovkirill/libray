@@ -1,5 +1,7 @@
 # Library
 
+[Svagger url](http://localhost:8000/docs/)
+
 ## Run dev
 
 ```bash
