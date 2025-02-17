@@ -4,6 +4,7 @@ from django.utils import timezone
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from drf_yasg.utils import swagger_auto_schema
 
 
 class BookViewSet(viewsets.ModelViewSet):
@@ -16,6 +17,12 @@ class BookViewSet(viewsets.ModelViewSet):
             permission_classes = [permissions.AllowAny]
             return [permission() for permission in permission_classes]
         return super().get_permissions()
+    
+    def get_serialilizer_class(self):
+        breakpoint()
+        if self.action in ["borrow", "return_book"]:
+            return None
+        return super().get_serializer_class()
 
     @action(
         detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]
