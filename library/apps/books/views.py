@@ -18,8 +18,7 @@ class BookViewSet(viewsets.ModelViewSet):
             return [permission() for permission in permission_classes]
         return super().get_permissions()
     
-    def get_serialilizer_class(self):
-        breakpoint()
+    def get_serializer_class(self):
         if self.action in ["borrow", "return_book"]:
             return None
         return super().get_serializer_class()
