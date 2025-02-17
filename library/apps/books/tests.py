@@ -37,7 +37,7 @@ class BookTestCase(APITestCase):
             "Authentication credentials were not provided.",
             response.data["detail"],
         )
-        
+
     def test_create_book_without_autentification(self):
         url = reverse("books:book-list")
         data = {
@@ -57,7 +57,7 @@ class BookTestCase(APITestCase):
             "Authentication credentials were not provided.",
             response.data["detail"],
         )
-        
+
     def test_create_book_without_autentification(self):
         url = reverse("books:book-list")
         data = {
@@ -77,7 +77,7 @@ class BookTestCase(APITestCase):
             "Authentication credentials were not provided.",
             response.data["detail"],
         )
-        
+
     def test_create_book_with_autentification_not_admin(self):
         url = reverse("books:book-list")
         data = {
@@ -101,7 +101,9 @@ class BookTestCase(APITestCase):
 
     def test_create_book_with_autentification_admin(self):
         password = "strongpass1"
-        user = get_user_model().objects.create(username="user2", email="user2@mial.com", is_superuser=True)
+        user = get_user_model().objects.create(
+            username="user2", email="user2@mial.com", is_superuser=True
+        )
 
         user.set_password(password)
         user.save()
@@ -112,7 +114,7 @@ class BookTestCase(APITestCase):
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         test_user_token = response.data["access"]
-        
+
         url = reverse("books:book-list")
         data = {
             "title": "Book titlr",
