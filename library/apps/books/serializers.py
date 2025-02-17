@@ -7,7 +7,7 @@ class BookSerializer(serializers.ModelSerializer):
     is_available = serializers.SerializerMethodField()
 
     def get_is_available(self, obj: Book):
-        need_return = getattr(obj, "need_return") or 0
+        need_return = getattr(obj, "need_return", 0)
         return not bool(need_return)
 
     class Meta:
