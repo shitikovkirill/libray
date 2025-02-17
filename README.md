@@ -10,7 +10,7 @@ docker compose up
 
 ## Run test
 ```bash
-docker compose -f docker-compose.yaml -f docker-compose.test.yaml up app --build
+docker compose -f docker-compose.yaml -f docker-compose.test.yaml up --build
 ```
 
 ## Run manage.py

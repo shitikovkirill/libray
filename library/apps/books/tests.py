@@ -96,28 +96,12 @@ class LoanModelTestCase(TestCase):
 class BookTestCase(APITestCase):
     def setUp(self):
         password = "strongpass1"
-        user = get_user_model().objects.create(username="user1", email="user1@mial.com")
-        user.set_password(password)
-        user.save()
-
-        url = reverse("accounts:token_create")
-        data = {"username": "user1", "password": "strongpass1"}
-
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.test_user_token = response.data["access"]
-
-        user = get_user_model().objects.create_superuser(
-            username="user2", email="user2@mial.com"
+        self.user = get_user_model().objects.create(
+            username="user1", email="user1@mial.com", password=password
         )
-        user.set_password(password)
-        user.save()
-
-        data = {"username": user.username, "password": password}
-
-        response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.test_admin_user_token = response.data["access"]
+        self.admin_user = get_user_model().objects.create_superuser(
+            username="user2", email="user2@mial.com", password=password
+        )
 
     def test_create_book_without_autentification(self):
         url = reverse("books:book-list")
@@ -149,7 +133,7 @@ class BookTestCase(APITestCase):
             "published_date": "2025-02-16",
         }
 
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.test_user_token)
+        self.client.force_authenticate(user=self.user)
         response = self.client.post(
             url,
             data,
@@ -170,9 +154,7 @@ class BookTestCase(APITestCase):
             "published_date": "2025-02-16",
         }
 
-        self.client.credentials(
-            HTTP_AUTHORIZATION="Bearer " + self.test_admin_user_token
-        )
+        self.client.force_authenticate(user=self.admin_user)
         response = self.client.post(
             url,
             data,
