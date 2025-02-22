@@ -180,3 +180,4 @@ tmp
 nix/test/secrets.nix
 *.nix
 *.nix.example
+venv
