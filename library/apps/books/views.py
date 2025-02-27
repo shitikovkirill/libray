@@ -35,7 +35,7 @@ class BookViewSet(viewsets.ModelViewSet):
         loan = Loan.objects.create(user=request.user, book=book)
         book.save()
 
-        return Response(LoanSerializer(loan).data)
+        return Response(LoanSerializer(loan).data, status=status.HTTP_201_CREATED)
 
     @action(
         detail=True, methods=["post"], permission_classes=[permissions.IsAuthenticated]

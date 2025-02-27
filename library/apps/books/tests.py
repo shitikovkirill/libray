@@ -212,3 +212,30 @@ class BookAPITestCase(APITestCase):
         detail_url = reverse("books:book-detail", args=[self.book.id])
         response = self.client.delete(detail_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+
+
+class BookBorrowAPITestCase(APITestCase):
+    def setUp(self):
+        password = "strongpass1"
+        self.user = get_user_model().objects.create(
+            username="user1", email="user1@mial.com", password=password
+        )
+        self.book = Book.objects.create(
+            title="Test Book",
+            author="Test Author",
+            isbn="1234567890123",
+            page_count=100,
+            published_date="2025-02-16",
+        )
+
+    def test_borrow_book(self):
+        url = reverse("books:book-borrow", args=[self.book.id])
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertFalse(response.data.get("is_returned"))
+        
+    def test_borrow_book_without_autentification(self):
+        url = reverse("books:book-borrow", args=[self.book.id])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
