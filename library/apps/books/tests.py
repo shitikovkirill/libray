@@ -216,7 +216,9 @@ class BookAPITestCase(APITestCase):
 
 class BookAvailabilityTestCase(APITestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create(username="testuser", email="test@example.com")
+        self.user = get_user_model().objects.create(
+            username="testuser", email="test@example.com"
+        )
         self.admin_user = get_user_model().objects.create_superuser(
             username="user2", email="user2@mial.com"
         )
@@ -226,17 +228,19 @@ class BookAvailabilityTestCase(APITestCase):
             isbn="9876543210123",
             page_count=150,
             published_date="2025-02-16",
-            )
+        )
         self.book_with_loan = Book.objects.create(
             title="Unavailable Book",
             author="Author",
             isbn="1112223334445",
             page_count=200,
             published_date="2025-02-16",
-            )
+        )
         Loan.objects.create(user=self.user, book=self.book_with_loan)
         self.book_list_url = reverse("books:book-list")
-        self.book_detail_url = reverse("books:book-detail", args=[self.book_with_loan.id])
+        self.book_detail_url = reverse(
+            "books:book-detail", args=[self.book_with_loan.id]
+        )
 
     def test_book_list_availability(self):
         response = self.client.get(self.book_list_url)
@@ -272,14 +276,14 @@ class BookBorrowAPITestCase(APITestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertFalse(response.data.get("is_returned"))
-        
+
     def test_borrow_book_without_autentification(self):
         url = reverse("books:book-borrow", args=[self.book.id])
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
-        
+
     def test_borrow_book_not_exist(self):
-        url = reverse("books:book-borrow", args=[self.book.id+1])
+        url = reverse("books:book-borrow", args=[self.book.id + 1])
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -305,14 +309,14 @@ class BookReturnBookAPITestCase(APITestCase):
             isbn="9876543210123",
             page_count=150,
             published_date="2025-02-16",
-            )
+        )
         self.book_with_loan = Book.objects.create(
             title="Unavailable Book",
             author="Author",
             isbn="1112223334445",
             page_count=200,
             published_date="2025-02-16",
-            )
+        )
         Loan.objects.create(user=self.user, book=self.book_with_loan)
 
     def test_return_book(self):
@@ -331,7 +335,7 @@ class BookReturnBookAPITestCase(APITestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertIn("book is registered to another user", response.data.get("error"))
-        
+
     def test_return_book_not_exist(self):
         url = reverse("books:book-return-book", args=[self.book.id])
         self.client.force_authenticate(user=self.user)

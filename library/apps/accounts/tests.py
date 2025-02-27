@@ -1,13 +1,15 @@
+from apps.accounts.serializers import UserSerializer
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-from apps.accounts.serializers import UserSerializer
 
 
 class UserSerializerTestCase(APITestCase):
     def setUp(self):
-        self.user = get_user_model().objects.create(username="testuser", email="testuser@example.com")
+        self.user = get_user_model().objects.create(
+            username="testuser", email="testuser@example.com"
+        )
         self.user.set_password("securepassword")
         self.user.save()
 
@@ -17,7 +19,10 @@ class UserSerializerTestCase(APITestCase):
 
         self.assertIn("username", data)
         self.assertIn("email", data)
-        self.assertNotIn("password", data)  # We check that there is no password in the answer ;)
+        self.assertNotIn(
+            "password", data
+        )  # We check that there is no password in the answer ;)
+
 
 class UserTestCase(APITestCase):
     def setUp(self):
