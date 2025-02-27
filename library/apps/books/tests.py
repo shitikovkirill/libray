@@ -214,6 +214,44 @@ class BookAPITestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
 
+class BookAvailabilityTestCase(APITestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create(username="testuser", email="test@example.com")
+        self.admin_user = get_user_model().objects.create_superuser(
+            username="user2", email="user2@mial.com"
+        )
+        self.book = Book.objects.create(
+            title="Available Book",
+            author="Author",
+            isbn="9876543210123",
+            page_count=150,
+            published_date="2025-02-16",
+            )
+        self.book_with_loan = Book.objects.create(
+            title="Unavailable Book",
+            author="Author",
+            isbn="1112223334445",
+            page_count=200,
+            published_date="2025-02-16",
+            )
+        Loan.objects.create(user=self.user, book=self.book_with_loan)
+        self.book_list_url = reverse("books:book-list")
+        self.book_detail_url = reverse("books:book-detail", args=[self.book_with_loan.id])
+
+    def test_book_list_availability(self):
+        response = self.client.get(self.book_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        available_books = {book["isbn"]: book["is_available"] for book in response.data}
+        self.assertTrue(available_books["9876543210123"])  # Available Book ;)
+        self.assertFalse(available_books["1112223334445"])  # Unavailable Book ;)
+
+    def test_book_detail_availability(self):
+        self.client.force_authenticate(user=self.admin_user)
+        response = self.client.get(self.book_detail_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertFalse(response.data["is_available"])
+
+
 class BookBorrowAPITestCase(APITestCase):
     def setUp(self):
         password = "strongpass1"
