@@ -277,3 +277,63 @@ class BookBorrowAPITestCase(APITestCase):
         url = reverse("books:book-borrow", args=[self.book.id])
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        
+    def test_borrow_book_not_exist(self):
+        url = reverse("books:book-borrow", args=[self.book.id+1])
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_borrow_book_alredy_borrowed(self):
+        Loan.objects.create(user=self.user, book=self.book)
+        url = reverse("books:book-borrow", args=[self.book.id])
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertEqual(response.data.get("error"), "Book is not available")
+
+
+class BookReturnBookAPITestCase(APITestCase):
+    def setUp(self):
+        password = "strongpass1"
+        self.user = get_user_model().objects.create(
+            username="user1", email="user1@mial.com", password=password
+        )
+        self.book = Book.objects.create(
+            title="Available Book",
+            author="Author",
+            isbn="9876543210123",
+            page_count=150,
+            published_date="2025-02-16",
+            )
+        self.book_with_loan = Book.objects.create(
+            title="Unavailable Book",
+            author="Author",
+            isbn="1112223334445",
+            page_count=200,
+            published_date="2025-02-16",
+            )
+        Loan.objects.create(user=self.user, book=self.book_with_loan)
+
+    def test_return_book(self):
+        url = reverse("books:book-return-book", args=[self.book_with_loan.id])
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data.get("is_returned"))
+
+    def test_return_book_not_correct_user(self):
+        user = get_user_model().objects.create(
+            username="user_return_book", email="user@mial.com", password="strongpass1"
+        )
+        url = reverse("books:book-return-book", args=[self.book_with_loan.id])
+        self.client.force_authenticate(user=user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertIn("book is registered to another user", response.data.get("error"))
+        
+    def test_return_book_not_exist(self):
+        url = reverse("books:book-return-book", args=[self.book.id])
+        self.client.force_authenticate(user=self.user)
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
