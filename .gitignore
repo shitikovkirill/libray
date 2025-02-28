@@ -178,6 +178,4 @@ ipython_config.py
 *.key
 tmp
 nix/test/secrets.nix
-*.nix
-*.nix.example
 venv
