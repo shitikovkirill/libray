@@ -54,3 +54,18 @@ git push heroku main
 heroku run python manage.py migrate
 heroku run python manage.py createsuperuser
 heroku open
+
+
+### Nixos test build
+
+```bash
+sudo nixos-container create library --config-file nix/test/configuration.nix
+
+sudo nixos-container start  library
+
+sudo nixos-container update library --config-file nix/test/configuration.nix
+
+sudo nixos-container root-login library
+
+sudo nixos-container show-ip library
+```
