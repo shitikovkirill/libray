@@ -2,7 +2,7 @@
 with lib;
 let
   project = "application";
-  user = "project";
+  user = project;
   group = project;
   cfg = config.services.djangoService;
   backend = import ../default.nix { };
